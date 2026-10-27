@@ -29,8 +29,8 @@ NyayVandan shifts AI in law from **prediction → reasoning** by:
 ## ✨ Key Features
 - 🔍 **Hybrid Case Retrieval** (Semantic + Lexical + Legal Entity based)
 - 🧠 **BERT-based Semantic Understanding** (Sentence-BERT)
-- ⚖️ **Explainable AI** (LIME & SHAP)
-- 🛡️ **Ethical Safeguards** (Bias & Diversity Detection)
+- ⚖️ **Similarity Explanations** (shared legal references and terms)
+- 🛡️ **Heuristic Review Flags** (court, date, and outcome diversity)
 - 🇮🇳 **India-Centric Design** (IPC, CrPC, Constitution)
 - 👩‍⚖️ **Judge-Centric Dashboard**
 
@@ -44,14 +44,14 @@ NyayVandan shifts AI in law from **prediction → reasoning** by:
 
 ### 2. Legal Named Entity Recognition (NER)
 - spaCy with custom legal rules
-- Extracts IPC, CrPC, Articles, courts, and case names
+- Extracts IPC, CrPC, constitutional articles, and selected statute names
 
 ### 3. Semantic Embeddings
 - **Sentence-BERT (all-MiniLM-L6-v2)**
 - Converts case facts into dense semantic vectors
 
 ### 4. Lexical Retrieval
-- TF-IDF / BM25 for exact legal term matching
+- TF-IDF for lexical similarity
 
 ### 5. Hybrid Case-Based Reasoning (CBR)
 Final similarity score:
@@ -63,14 +63,16 @@ Similarity = 0.5 × Semantic + 0.3 × Lexical + 0.2 × Entity Overlap
 ### 6. Vector Similarity Search
 - **FAISS** for fast nearest-neighbor search
 
-### 7. Explainable AI (XAI)
-- **LIME** for text influence explanation
-- **SHAP** for feature contribution analysis
+### 7. Similarity explanations
+- Shared legal references, overlapping terms, and retrieval score breakdown
+- These are descriptive signals, not causal explanations of legal relevance
 
 ### 8. Ethical AI
-- Diversity Score (bias detection)
-- Constitutional alignment checking
+- Heuristic diversity indicators and constitutional article notes
 - Human-in-the-loop advisory system
+
+The ethical indicators are simple heuristics. They do not measure demographic
+fairness or establish constitutional compliance.
 
 ---
 
@@ -83,7 +85,7 @@ Similarity = 0.5 × Semantic + 0.3 × Lexical + 0.2 × Entity Overlap
 ## 🛠️ Technology Stack
 
 ### Frontend
-- Streamlit (simple, judge-friendly UI)
+- Plain HTML, CSS, and JavaScript
 
 ### Backend
 - FastAPI + Uvicorn
@@ -92,27 +94,20 @@ Similarity = 0.5 × Semantic + 0.3 × Lexical + 0.2 × Entity Overlap
 - spaCy
 - Sentence-BERT
 - FAISS
-- TF-IDF / BM25
-- LIME
-- SHAP
+- TF-IDF
 
 ### Dataset
-- IndianKanoon judgments (offline)
-- Curated constitutional principles dataset
+- Sample judgments are generated on first run for local demonstration.
+- Optional datasets are loaded only when their files are supplied in `data/`.
 
 ---
 
-## 📊 Performance & Evaluation
+## 📊 Evaluation
 
-| Component | Metric | Result |
-|--------|------|--------|
-| Legal NER | F1-Score | 0.90 – 0.93 |
-| Retrieval Quality | Precision@10 | 0.82 – 0.88 |
-| Ranking Quality | NDCG@10 | 0.84 – 0.89 |
-| Explainability | Human Rating | 4.2 / 5 |
-| Bias Detection | Parity Gap | < 0.1 |
-
-> NyayVandan achieves ~**85% precedent relevance accuracy**.
+No independently reproducible evaluation results are currently included. The
+retrieval scores are similarity scores, not calibrated probabilities or
+validated measures of legal relevance. Evaluate against a reviewed, legally
+curated benchmark before using results for research or professional work.
 
 ---
 
@@ -134,9 +129,53 @@ Similarity = 0.5 × Semantic + 0.3 × Lexical + 0.2 × Entity Overlap
 ---
 
 ## 📌 Limitations
-- Dependent on digitized judgments
+- The generated data is a small demonstration dataset, not a validated
+  corpus of authoritative judgments. Legal QA records, when supplied, are
+  reference material and should not be treated as court precedents.
+- The web login is a visual demo flow only; it does not authenticate users or
+  protect sensitive case information.
 - Requires retraining for legal updates
 - GPU recommended for large-scale deployment
+- This prototype is not hardened or approved for deployment in a court or
+  production environment.
+
+## ▶️ Run Locally on Windows
+
+Python 3.10 or 3.11 is recommended for compatibility with the native ML
+dependencies. This development environment has Python 3.13 available; try it
+first, and use Python 3.11 if a dependency has no compatible wheel. Avoid
+Python 3.14 until all ML dependencies provide compatible wheels. Run these
+commands in PowerShell from the repository root:
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+python run.py
+```
+
+The first server start downloads/caches the Sentence-BERT model and builds the
+local FAISS index; it can take several minutes and requires internet access for
+those initial downloads. Later runs use the local model cache. The API listens
+on `http://127.0.0.1:8000`.
+
+In a **second PowerShell window**, from the repository root, serve the frontend:
+
+```powershell
+python -m http.server 5500 --directory frontend --bind 127.0.0.1
+```
+
+Open `http://127.0.0.1:5500` in a browser. API documentation is at
+`http://127.0.0.1:8000/docs`. The application binds to loopback and is intended
+for local development only. Do not expose it to a network or enter real or
+sensitive case data.
+
+If PowerShell blocks virtual-environment activation, run
+`.\.venv\Scripts\python.exe -m pip install -r requirements.txt` and then
+`.\.venv\Scripts\python.exe -m spacy download en_core_web_sm` and
+`.\.venv\Scripts\python.exe run.py` without activating the environment.
 
 ---
 

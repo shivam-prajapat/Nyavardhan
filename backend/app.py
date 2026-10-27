@@ -17,7 +17,7 @@ Endpoints:
 
 import os
 import sys
-import traceback
+import logging
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException
@@ -46,6 +46,8 @@ from backend.explainability import explain_similarity
 from backend.ethics import run_ethical_review
 from backend.data_loader import load_unified_dataset
 
+logger = logging.getLogger(__name__)
+
 # ===================== App Setup =====================
 
 app = FastAPI(
@@ -58,11 +60,14 @@ app = FastAPI(
     version="2.0.0",
 )
 
-# CORS: Allow frontend to connect
+# Allow only the local development frontend.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=[
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+    ],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -270,11 +275,11 @@ async def analyze_case(request: AnalyzeRequest):
             ),
         }
     
-    except Exception as e:
-        traceback.print_exc()
+    except Exception:
+        logger.exception("Case analysis failed")
         raise HTTPException(
             status_code=500,
-            detail=f"Analysis error: {str(e)}"
+            detail="Analysis failed. Check the server logs for details."
         )
 
 

@@ -504,7 +504,7 @@ def generate_dataset():
     output_path = os.path.join(output_dir, "judgments.csv")
     
     df.to_csv(output_path, index=False, encoding="utf-8")
-    print(f"✅ Generated {len(df)} sample cases → {output_path}")
+    print(f"Generated {len(df)} sample cases -> {output_path}")
     print(f"   Columns: {list(df.columns)}")
     print(f"   Courts: {df['court'].nunique()} unique courts")
     print(f"   Years: {df['year'].min()} - {df['year'].max()}")

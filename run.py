@@ -29,7 +29,7 @@ def main():
     # Check if dataset exists, generate if not
     from backend.config import JUDGMENTS_CSV
     if not os.path.exists(JUDGMENTS_CSV):
-        print("\n📂 Dataset not found. Generating sample data...")
+        print("\nDataset not found. Generating sample data...")
         from data.generate_sample_data import generate_dataset
         generate_dataset()
     

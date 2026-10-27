@@ -49,5 +49,5 @@ MIN_COURT_DIVERSITY = 2
 MIN_YEAR_RANGE = 2
 
 # --- Server Settings ---
-HOST = "0.0.0.0"
+HOST = "127.0.0.1"
 PORT = 8000

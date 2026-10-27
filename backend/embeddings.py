@@ -36,13 +36,13 @@ class EmbeddingEngine:
     
     def __init__(self):
         """Initialize the embedding engine with local Sentence-BERT model."""
-        print(f"📦 Loading Sentence-BERT model: {SBERT_MODEL_NAME}")
+        print(f"Loading Sentence-BERT model: {SBERT_MODEL_NAME}")
         self.model = SentenceTransformer(SBERT_MODEL_NAME)
         self.dimension = self.model.get_sentence_embedding_dimension()
         self.index = None
         self.embeddings = None
         self.case_ids = []
-        print(f"✅ Model loaded. Embedding dimension: {self.dimension}")
+        print(f"Model loaded. Embedding dimension: {self.dimension}")
     
     def encode(self, texts: list, batch_size: int = 32, show_progress: bool = False) -> np.ndarray:
         """
@@ -79,22 +79,22 @@ class EmbeddingEngine:
         texts = df[text_column].tolist()
         self.case_ids = df["case_id"].tolist()
         
-        print(f"🔄 Encoding {len(texts)} cases...")
+        print(f"Encoding {len(texts)} cases...")
         self.embeddings = self.encode(texts, show_progress=True)
         
         # Build FAISS index using inner product (cosine sim on normalized vectors)
         self.index = faiss.IndexFlatIP(self.dimension)
         self.index.add(self.embeddings.astype(np.float32))
         
-        print(f"✅ FAISS index built with {self.index.ntotal} vectors")
+        print(f"FAISS index built with {self.index.ntotal} vectors")
     
     def save_index(self):
         """Persist FAISS index and embeddings to disk."""
         if self.index is not None:
             faiss.write_index(self.index, FAISS_INDEX_PATH)
             np.save(EMBEDDINGS_NPY, self.embeddings)
-            print(f"💾 Index saved to {FAISS_INDEX_PATH}")
-            print(f"💾 Embeddings saved to {EMBEDDINGS_NPY}")
+            print(f"Index saved to {FAISS_INDEX_PATH}")
+            print(f"Embeddings saved to {EMBEDDINGS_NPY}")
     
     def load_index(self, df: pd.DataFrame):
         """
@@ -106,12 +106,12 @@ class EmbeddingEngine:
         self.case_ids = df["case_id"].tolist()
         
         if os.path.exists(FAISS_INDEX_PATH) and os.path.exists(EMBEDDINGS_NPY):
-            print("📂 Loading pre-built FAISS index from disk...")
+            print("Loading pre-built FAISS index from disk...")
             self.index = faiss.read_index(FAISS_INDEX_PATH)
             self.embeddings = np.load(EMBEDDINGS_NPY)
-            print(f"✅ Loaded index with {self.index.ntotal} vectors")
+            print(f"Loaded index with {self.index.ntotal} vectors")
         else:
-            print("⚠️ No pre-built index found. Building from dataset...")
+            print("No pre-built index found. Building from dataset...")
             self.build_index(df)
             self.save_index()
     

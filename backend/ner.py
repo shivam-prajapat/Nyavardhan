@@ -17,14 +17,20 @@ Uses a hybrid approach:
 """
 
 import re
+import logging
 import spacy
 from spacy.matcher import Matcher
+
+logger = logging.getLogger(__name__)
 
 # ---------- Load spaCy Model ----------
 try:
     nlp = spacy.load("en_core_web_sm")
 except OSError:
-    # Gracefully degrade if model not downloaded yet
+    logger.warning(
+        "spaCy model en_core_web_sm is not installed; using regex-only legal "
+        "entity extraction. Install it with `python -m spacy download en_core_web_sm`."
+    )
     nlp = spacy.blank("en")
 
 # ---------- Initialize Matcher ----------
