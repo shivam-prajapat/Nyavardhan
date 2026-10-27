@@ -188,12 +188,9 @@ If PowerShell blocks virtual-environment activation, run
 
 ---
 
-## 👨‍💻 Team
-- **Tanya Singh**
-- **Snigdha**
-- **Yaswanthi**
+## 👨‍💻 Author
+- **Shivam Prajapat** ([@shivam-prajapat](https://github.com/shivam-prajapat))
 
-**Mentor:** Divyanshu Kumar  
 **Domain:** Artificial Intelligence in Law
 
 ---
